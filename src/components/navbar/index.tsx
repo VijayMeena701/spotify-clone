@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import CommandSearch from "@/components/navbar/SearchBar";
+import CommandSearch from "@/src/components/navbar/SearchBar";
 
 const Navbar = () => {
 	return (

@@ -1,9 +1,8 @@
 import NextAuth from "next-auth";
 import { authOptions } from "./lib/authOptions";
 
-export const {
-  handlers,
-  auth,
-  signIn,
-  signOut
-} = NextAuth(authOptions);
+const nextAuth = NextAuth(authOptions);
+
+export const { auth, handlers, signIn, signOut } = nextAuth;
+
+export default nextAuth;

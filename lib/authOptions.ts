@@ -31,11 +31,7 @@ export const authOptions: NextAuthConfig = {
     SpotifyProvider({
       clientId: process.env.SPOTIFY_CLIENT_ID,
       clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-      // authorization: {
-      //   params: {
-      //     scope: "user-read-email user-read-private user-library-read user-library-modify user-read-recently-played user-top-read playlist-read-private playlist-read-collaborative playlist-modify-public user-read-playback-state user-modify-playback-state user-read-currently-playing",
-      //   },
-      // },
+      authorization: `https://accounts.spotify.com/authorize?scope=${encodeURIComponent("ugc-image-upload user-read-playback-state user-modify-playback-state user-read-currently-playing app-remote-control streaming playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private user-follow-modify user-follow-read user-read-playback-position user-top-read user-read-recently-played user-library-modify user-library-read user-read-email user-read-private")}`
     }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
@@ -113,15 +109,17 @@ export const authOptions: NextAuthConfig = {
       session.error = token.error as string;
       return session;
     },
-    authorized({ request, auth }) {
-      return !!auth?.user; // Ensure there's a logged in user for every request
-    },
-  },
-  pages: {
-    signIn: "/login",
+    // authorized({ request, auth }) {
+    //   console.log("Authorized", auth);
+    //   return !!auth?.user; // Ensure there's a logged in user for every request
+    // },
+    signIn: async ({ user, account, profile }) => {
+      console.log("Sign In", user, account, profile);
+      return true;
+    }
   },
   session: {
-    strategy: "jwt",
+    strategy: "jwt" as const,
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   trustHost: true,
