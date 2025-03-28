@@ -46,7 +46,7 @@ export default function ProfilePage() {
     setIsEditing(!isEditing);
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setProfileData(prev => ({
       ...prev,
@@ -54,7 +54,7 @@ export default function ProfilePage() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e:React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Here you would submit the profile changes to your API
     // For now, we'll just exit edit mode
