@@ -33,54 +33,54 @@ export const authOptions: NextAuthConfig = {
       clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
       authorization: `https://accounts.spotify.com/authorize?scope=${encodeURIComponent("ugc-image-upload user-read-playback-state user-modify-playback-state user-read-currently-playing app-remote-control streaming playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private user-follow-modify user-follow-read user-read-playback-position user-top-read user-read-recently-played user-library-modify user-library-read user-read-email user-read-private")}`
     }),
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      authorization: {
-        params: {
-          prompt: "consent",
-          access_type: "offline",
-          response_type: "code",
-        },
-      },
-    }),
-    FacebookProvider({
-      clientId: process.env.FACEBOOK_CLIENT_ID,
-      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-    }),
-    GithubProvider({
-      clientId: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      authorization: {
-        params: {
-          prompt: "consent",
-          access_type: "offline",
-          response_type: "code",
-        },
-      },
-    }),
-    CredentialsProvider({
-      name: "Credentials",
-      credentials: {
-        username: { label: "Username", type: "text", placeholder: "Username" },
-        password: { label: "Password", type: "password", placeholder: "********" },
-      },
-      async authorize(credentials) {
-        if (!credentials?.username || !credentials?.password) {
-          return null;
-        }
+    // GoogleProvider({
+    //   clientId: process.env.GOOGLE_CLIENT_ID,
+    //   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    //   authorization: {
+    //     params: {
+    //       prompt: "consent",
+    //       access_type: "offline",
+    //       response_type: "code",
+    //     },
+    //   },
+    // }),
+    // FacebookProvider({
+    //   clientId: process.env.FACEBOOK_CLIENT_ID,
+    //   clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+    // }),
+    // GithubProvider({
+    //   clientId: process.env.GITHUB_CLIENT_ID,
+    //   clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    //   authorization: {
+    //     params: {
+    //       prompt: "consent",
+    //       access_type: "offline",
+    //       response_type: "code",
+    //     },
+    //   },
+    // }),
+    // CredentialsProvider({
+    //   name: "Credentials",
+    //   credentials: {
+    //     username: { label: "Username", type: "text", placeholder: "Username" },
+    //     password: { label: "Password", type: "password", placeholder: "********" },
+    //   },
+    //   async authorize(credentials) {
+    //     if (!credentials?.username || !credentials?.password) {
+    //       return null;
+    //     }
 
-        // This is a basic example - you should implement proper authentication
-        const user:User = {
-          id: credentials.username as string,
-          email: credentials.username as string,
-          name: credentials.username as string,
-          image: "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50",
-        };
+    //     // This is a basic example - you should implement proper authentication
+    //     const user:User = {
+    //       id: credentials.username as string,
+    //       email: credentials.username as string,
+    //       name: credentials.username as string,
+    //       image: "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50",
+    //     };
 
-        return user;
-      },
-    }),
+    //     return user;
+    //   },
+    // }),
   ],
   callbacks: {
     jwt: async ({ token, account, user }) => {
