@@ -33,14 +33,14 @@ export default function SettingsPage() {
     redirect("/login");
   }
 
-  const handleToggle = (setting) => {
+  const handleToggle = (setting: keyof typeof settings) => {
     setSettings(prev => ({
       ...prev,
       [setting]: !prev[setting]
     }));
   };
 
-  const handleChange = (setting, value) => {
+  const handleChange = (setting: keyof typeof settings, value: string | boolean) => {
     setSettings(prev => ({
       ...prev,
       [setting]: value
