@@ -52,6 +52,7 @@ let tokenRefreshPromise: Promise<any> | null = null;
 
 export async function fetchFromSpotify(endpoint: string, session: Session | null, options = {}) {
   const executeRequest = async (token: string) => {
+    console.log(`Bearer ${token}`)
     const response = await fetch(`${SPOTIFY_API_BASE}${endpoint}`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -89,9 +90,15 @@ export async function fetchFromSpotify(endpoint: string, session: Session | null
         data: null 
       };
     }
+
+    try {
+      const data = await response.json();
+      return { success: true, data, error: null };
+    } catch (error) {
+      console.log(error)
+      return { success: true, data:null, error: null }
+    }
     
-    const data = await response.json();
-    return { success: true, data, error: null };
   };
 
   try {
@@ -153,49 +160,58 @@ export async function getArtist(id: string, session: Session | null) {
   return result.success ? result.data : null;
 }
 
+// Check if track is saved in user's library
+export async function isTrackSaved(trackId: string, session: Session | null) {
+  const result = await fetchFromSpotify(`/me/tracks/contains?ids=${trackId}`, session);
+  return result.success ? result.data[0] : false;
+}
+
+// Save track to user's library (like)
+export async function saveTrack(trackId: string, session: Session | null) {
+  const result = await fetchFromSpotify(`/me/tracks?ids=${trackId}`, session, {
+    method: 'PUT',
+  });
+  return result.success;
+}
+
+// Remove track from user's library (unlike)
+export async function removeTrack(trackId: string, session: Session | null) {
+  const result = await fetchFromSpotify(`/me/tracks?ids=${trackId}`, session, {
+    method: 'DELETE',
+  });
+  return result.success;
+}
+
 export async function searchSpotify(query: string, types: string[], session: Session | null) {
   const typesString = types.join(',');
-  const result = await fetchFromSpotify(`/search?q=${encodeURIComponent(query)}&type=${typesString}`, session);
+  const result = await fetchFromSpotify(`/search?q=${encodeURIComponent(query)}&type=${typesString}&market=from_token&limit=20`, session);
   return result.success ? result.data : {};
 }
 
-// Function to get recommended tracks with available previews
-// export async function getRecommendedTracks(session: Session | null) {
-//   try {
-//     // First get some seed genres
-//     const genresResult = await fetchFromSpotify(`/recommendations/available-genre-seeds`, session);
-//     if (!genresResult.success || !genresResult.data?.genres?.length) {
-//       console.error("Failed to get genre seeds");
-//       return { tracks: [] };
-//     }
-    
-//     // Take 3 random genres as seeds
-//     const allGenres = genresResult.data.genres;
-//     const selectedGenres = [];
-//     for (let i = 0; i < 3 && allGenres.length > 0; i++) {
-//       const randomIndex = Math.floor(Math.random() * allGenres.length);
-//       selectedGenres.push(allGenres[randomIndex]);
-//       allGenres.splice(randomIndex, 1);
-//     }
-    
-//     // Get recommended tracks with these genres, filtering for only those with preview URLs
-//     const result = await fetchFromSpotify(
-//       `/recommendations?limit=20&seed_genres=${selectedGenres.join(',')}`, 
-//       session
-//     );
-    
-//     if (!result.success) {
-//       console.error("Failed to get recommendations");
-//       return { tracks: [] };
-//     }
-    
-//     // Filter to only tracks with preview_url
-//     const tracksWithPreviews = result.data.tracks.filter(track => track.preview_url);
-//     console.log(`Found ${tracksWithPreviews.length} tracks with previews out of ${result.data.tracks.length}`);
-    
-//     return { tracks: tracksWithPreviews };
-//   } catch (error) {
-//     console.error("Error getting recommended tracks:", error);
-//     return { tracks: [] };
-//   }
-// }
+
+export async function getRecommendedTracks(session: Session | null) {
+  const result = await fetchFromSpotify("/recommendations", session, {
+    method: "GET",
+  });
+  return result.success ? result.data : { tracks: [] };
+}
+
+export async function getArtistAlbums(id: string, session: Session | null) {
+  const result = await fetchFromSpotify(`/artists/${id}/albums?market=from_token&limit=48`, session, { method: "GET" });
+  if (!result.success) {
+    return { items: [] };
+  }
+
+  // Filter unique albums by name and sort by popularity
+  const uniqueAlbums = Array.from(
+    new Map(result.data.items.map((album: any) => [album.name, album])).values()
+  );
+
+  return { items: uniqueAlbums };
+}
+
+// Add queue management functions
+export async function getSpotifyQueue(session: Session | null) {
+  const result = await fetchFromSpotify('/me/player/queue', session);
+  return result.success ? result.data : { queue: [] };
+}

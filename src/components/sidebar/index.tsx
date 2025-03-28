@@ -10,7 +10,7 @@ const Sidebar = () => {
   const { data: session } = useSession();
 
   return (
-    <div className="w-64 bg-black h-full flex flex-col">
+    <div className="w-64 bg-black h-full flex flex-col sticky top-16 z-50">
       {/* Logo and Main Navigation */}
       <div className="bg-[#121212] rounded-lg p-6 mb-2">
         

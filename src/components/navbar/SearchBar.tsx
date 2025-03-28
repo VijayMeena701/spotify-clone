@@ -1,11 +1,20 @@
 "use client";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const CommandSearch: React.FC = () => {
 	const [value, setValue] = useState("");
+	const router = useRouter();
 
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setValue(event.target.value);
+	};
+
+	const handleSubmit = (e: React.FormEvent) => {
+		e.preventDefault();
+		if (value.trim()) {
+			router.push(`/search?q=${encodeURIComponent(value.trim())}`);
+		}
 	};
 
 	return (
@@ -20,10 +29,11 @@ const CommandSearch: React.FC = () => {
 				</button>
 				<span role="presentation" className="w-full h-full box-border">
 					<div className="w-full relative px-2">
-						<form role="search" className="relative w-full transition-all duration-200 ease-in-out" data-encore-id="formInputIcon">
+						<form onSubmit={handleSubmit} role="search" className="relative w-full transition-all duration-200 ease-in-out" data-encore-id="formInputIcon">
 							<div className="absolute right-auto left-0 z-[1] top-1/2 -translate-y-1/2 flex text[#656565]">
 								<div>
 									<button
+										type="submit"
 										className="hidden px-3 text-[#656565] relative bg-transparent border-0 rounded-[9999px] cursor-pointer text-center select-none align-middle p-0"
 										aria-label="Search"
 										data-encore-id="buttonTertiary"
@@ -67,6 +77,7 @@ const CommandSearch: React.FC = () => {
 										className="flex justify-center items-center p-0 text-[#656565] select-none cursor-pointer relative text-center"
 										aria-label="Browse"
 										data-encore-id="buttonTertiary"
+										type="submit"
 									>
 										<span aria-hidden="true" className="flex align-baseline border-0 m-0 p-0">
 											<svg data-encore-id="icon" role="img" aria-hidden="true" viewBox="0 0 24 24" className="block fill-current w-[24px] h-[24px]">
