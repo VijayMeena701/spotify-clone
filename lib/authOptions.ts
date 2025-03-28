@@ -1,8 +1,8 @@
-import type { NextAuthConfig, User } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import GoogleProvider from "next-auth/providers/google";
-import FacebookProvider from "next-auth/providers/facebook";
-import GithubProvider from "next-auth/providers/github";
+import type { NextAuthConfig } from "next-auth";
+// import CredentialsProvider from "next-auth/providers/credentials";
+// import GoogleProvider from "next-auth/providers/google";
+// import FacebookProvider from "next-auth/providers/facebook";
+// import GithubProvider from "next-auth/providers/github";
 import SpotifyProvider from "next-auth/providers/spotify";
 import { refreshAccessToken } from "./spotify";
 
