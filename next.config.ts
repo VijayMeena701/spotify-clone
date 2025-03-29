@@ -20,13 +20,14 @@ const nextConfig: NextConfig = {
 			}
 		]
 	},
-	env: {
-		NEXTAUTH_URL: process.env.NEXTAUTH_URL,
-	},
 	experimental: {
 		serverActions: {
 			allowedOrigins: [
 				"http://localhost:3000",
+				"http://vijaymeena.dev",
+				"https://vijaymeena.dev",
+				"http://wavejam.vijaymeena.dev",
+				"https://wavejam.vijaymeena.dev"
 			],
 		},
 		optimizeCss: true,
