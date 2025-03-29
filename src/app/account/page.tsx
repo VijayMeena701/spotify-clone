@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronRight, Edit, User, Settings, Bell, Shield, CreditCard } from "lucide-react";
+import { ChevronRight, User, Settings, Bell, Shield, CreditCard } from "lucide-react";
 
 export default function AccountPage() {
   const { data: session, status } = useSession();

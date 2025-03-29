@@ -235,7 +235,7 @@ const AlbumPage = ({ params }: { params: Promise<{ id: string }> }) => {
                     <h1 className="text-5xl font-bold mt-2 mb-6">{album.name}</h1>
                     <div className="flex items-center text-sm">
                         <span className="font-bold hover:underline cursor-pointer">
-                            {album.artists.map((artist: any) => artist.name).join(', ')}
+                            {album.artists.map((artist) => artist.name).join(', ')}
                         </span>
                         <span className="mx-1">•</span>
                         <span style={{ color: dominantColor ?? "#fff" }} className="font-bold" >{album.release_date?.split('-')[0]}</span>

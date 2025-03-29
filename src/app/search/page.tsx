@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import NextImage from 'next/image';
 import Link from 'next/link';
 import { Play, Pause, Clock3 } from 'lucide-react';
@@ -128,7 +128,7 @@ const SearchPage = () => {
   if (query && !loading && searchResults && Object.keys(searchResults).every(key => !searchResults[key as keyof SearchResults]?.items?.length)) {
     return (
       <div className="flex flex-col items-center justify-center py-20 px-6">
-        <h1 className="text-3xl font-bold mb-4">No results found for "{query}"</h1>
+        <h1 className="text-3xl font-bold mb-4">No results found for &ldquo;{query}&rdquo;</h1>
         <p className="text-gray-400">Please try again with a different search term.</p>
       </div>
     );
@@ -373,4 +373,13 @@ const SearchPage = () => {
   );
 };
 
-export default SearchPage;
+const Page = () => {
+  return (
+    <React.Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
+      <SearchPage />
+    </React.Suspense>
+  );
+}
+
+
+export default Page;

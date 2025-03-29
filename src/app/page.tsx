@@ -14,7 +14,6 @@ function HomeSection() {
   const { data: session } = useSession();
   const [greeting, setGreeting] = useState<string>("Good morning");
   // const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
   const [loadingTrack, setLoadingTrack] = useState<string | null>(null);
 
   useEffect(() => {
@@ -43,33 +42,6 @@ function HomeSection() {
         <a href="/login" className="bg-green-500 hover:bg-green-400 text-black font-semibold py-3 px-8 rounded-full">
           Log in
         </a>
-      </div>
-    );
-  }
-
-  // Render global error message if needed
-  if (error) {
-    return (
-      <div className="p-6">
-        <div className="bg-red-900/30 border border-red-500 text-white p-4 rounded-md mb-8">
-          <p>{error}</p>
-          <button 
-            onClick={() => window.location.reload()} 
-            className="mt-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md"
-          >
-            Retry
-          </button>
-        </div>
-        
-        {/* Render whatever content we did manage to load */}
-        <div className="bg-gradient-to-b from-[#1A1A1A] to-[#121212]">
-          {/* Header with greeting */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold">{greeting}</h1>
-          </div>
-          
-          {/* Rest of content would go here */}
-        </div>
       </div>
     );
   }

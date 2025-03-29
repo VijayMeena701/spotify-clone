@@ -1,8 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
-import { X, Play, Clock, ArrowRightLeft, RefreshCw } from 'lucide-react';
+import { X, Play } from 'lucide-react';
 import { usePlayer } from '@/lib/PlayerContext';
-import { useSession } from 'next-auth/react';
 import { formatTime } from '@/lib/utils';
 import Image from 'next/image';
 
@@ -13,14 +12,11 @@ interface QueueModalProps {
 }
 
 const QueueModal = ({ isOpen, onClose, onSyncQueue }: QueueModalProps) => {
-  const { data: session } = useSession();
   const { 
     queue, 
     removeFromQueue, 
-    currentTrack, 
-    playTrack,
-    skipToNext,
-    addToQueue
+    currentTrack,
+    skipToNext
   } = usePlayer();
   
   const [activeTab, setActiveTab] = useState<'queue' | 'history'>('queue');
@@ -56,12 +52,6 @@ const QueueModal = ({ isOpen, onClose, onSyncQueue }: QueueModalProps) => {
       onSyncQueue();
       // Reset syncing state after a short delay
       setTimeout(() => setIsSyncing(false), 1000);
-    }
-  };
-
-  const handlePlayTrack = (trackId: string) => {
-    if (session) {
-      playTrack(trackId, session);
     }
   };
 
@@ -184,7 +174,7 @@ const QueueModal = ({ isOpen, onClose, onSyncQueue }: QueueModalProps) => {
               {/* Add more button at the end */}
               <div className="mt-4 text-center">
                 <p className="text-gray-400 text-sm">Want to add more tracks?</p>
-                <p className="text-gray-500 text-xs mt-1">Search for a song and use the "Add to Queue" option</p>
+                <p className="text-gray-500 text-xs mt-1">Search for a song and use the &ldquo;Add to Queue&rdquo; option</p>
               </div>
             </>
           )}

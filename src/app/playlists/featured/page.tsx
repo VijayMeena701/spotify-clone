@@ -3,12 +3,13 @@ import { getFeaturedPlaylists } from "@/lib/spotify";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Play, Pause } from "lucide-react";
+import { Play } from "lucide-react";
 import Sidebar from "@/src/components/sidebar";
 import FooterPlayer from "@/src/components/footerPlayer";
 import Navbar from "@/src/components/navbar";
 import { usePlayer } from "@/lib/PlayerContext";
 import PlayerWrapper from "@/src/components/PlayerWrapper";
+import { Session } from "next-auth";
 
 interface Playlist {
   id: string;
@@ -203,7 +204,7 @@ export default function FeaturedPlaylistsPage() {
 }
 
 // Helper function to get playlist tracks
-async function getPlaylistTracks(playlistId: string, session: any) {
+async function getPlaylistTracks(playlistId: string, session: Session) {
   const result = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
     headers: {
       Authorization: `Bearer ${session.accessToken}`

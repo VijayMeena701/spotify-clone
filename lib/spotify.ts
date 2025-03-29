@@ -1,3 +1,4 @@
+import Album from "@/types/album";
 import { Session } from "next-auth";
 
 const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
@@ -13,7 +14,14 @@ export async function getAccessToken(session: Session | null) {
   return session.accessToken;
 }
 
-export async function refreshAccessToken(token: any) {
+interface Token {
+  accessToken: string;
+  refreshToken: string;
+  accessTokenExpires: number;
+  error?: string;
+}
+
+export async function refreshAccessToken(token: Token): Promise<Token> {
   try {
     const response = await fetch(TOKEN_ENDPOINT, {
       method: "POST",
@@ -48,7 +56,7 @@ export async function refreshAccessToken(token: any) {
   }
 }
 
-let tokenRefreshPromise: Promise<any> | null = null;
+let tokenRefreshPromise: Promise<Token> | null = null;
 
 export async function fetchFromSpotify(endpoint: string, session: Session | null, options = {}) {
   const executeRequest = async (token: string) => {
@@ -63,7 +71,7 @@ export async function fetchFromSpotify(endpoint: string, session: Session | null
     if (response.status === 401) {
       // Token expired, try to refresh
       if (!tokenRefreshPromise) {
-        tokenRefreshPromise = refreshAccessToken(session);
+        tokenRefreshPromise = refreshAccessToken(session as Token);
       }
       
       try {
@@ -204,7 +212,7 @@ export async function getArtistAlbums(id: string, session: Session | null) {
 
   // Filter unique albums by name and sort by popularity
   const uniqueAlbums = Array.from(
-    new Map(result.data.items.map((album: any) => [album.name, album])).values()
+    new Map(result.data.items.map((album: Album) => [album.name, album])).values()
   );
 
   return { items: uniqueAlbums };

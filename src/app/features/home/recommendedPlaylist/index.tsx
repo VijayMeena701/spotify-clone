@@ -49,7 +49,7 @@ const Recommended: React.FC<RecommendedTracksProps> = ({ loadingTrack, setLoadin
             })
 
         }
-    },[recommendedTracks])
+    },[recommendedTracks, session])
 
     return (
         <section className="mb-12">

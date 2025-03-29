@@ -1,27 +1,29 @@
-import type { NextAuthConfig } from "next-auth";
+import type { DefaultSession, NextAuthConfig } from "next-auth";
 // import CredentialsProvider from "next-auth/providers/credentials";
 // import GoogleProvider from "next-auth/providers/google";
 // import FacebookProvider from "next-auth/providers/facebook";
 // import GithubProvider from "next-auth/providers/github";
 import SpotifyProvider from "next-auth/providers/spotify";
 import { refreshAccessToken } from "./spotify";
+import { DefaultJWT } from "next-auth/jwt";
 
 declare module "next-auth" {
-  interface Session {
+  interface Session extends DefaultSession {
+    // eslint-disable-next-line
     user: any;
     accessToken: string;
+    refreshToken: string;
+    accessTokenExpires: number;
     error: string;
   }
 }
 
 declare module "next-auth" {
-  interface JWT {
+  interface JWT extends DefaultJWT {
     accessToken?: string;
     refreshToken?: string;
     username?: string;
     accessTokenExpires?: number;
-    error?: string;
-    user?: any;
   }
 }
 
@@ -101,9 +103,19 @@ export const authOptions: NextAuthConfig = {
       }
 
       // Access token has expired, try to update it
-      return refreshAccessToken(token);
+      const refreshedToken = await refreshAccessToken({
+        accessToken: token.accessToken as string,
+        refreshToken: token.refreshToken as string,
+        accessTokenExpires: token.accessTokenExpires as number
+      });
+
+      return {
+        ...token,
+        ...refreshedToken,
+      };
     },
     session: async ({ session, token }) => {
+      // eslint-disable-next-line
       session.user = token.user as any;
       session.accessToken = token.accessToken as string;
       session.error = token.error as string;

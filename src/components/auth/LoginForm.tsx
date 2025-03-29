@@ -45,6 +45,7 @@ export default function LoginForm() {
                 router.push("/");
                 router.refresh();
             }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (err) {
             setError("Something went wrong. Please try again.");
         } finally {
