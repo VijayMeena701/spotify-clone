@@ -5,8 +5,8 @@ import FooterPlayer from "@/src/components/footerPlayer";
 import PlayerWrapper from "@/src/components/PlayerWrapper";
 
 export const metadata: Metadata = {
-  title: "Spotify Clone",
-  description: "A Spotify clone built with Next.js",
+  title: "Wave-Jam",
+  description: "A music app built with Next.js and Spotify SDK",
 };
 
 export default async function RootLayout({

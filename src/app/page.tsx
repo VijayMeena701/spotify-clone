@@ -33,12 +33,12 @@ function HomeSection() {
       <div className="flex flex-col items-center justify-center h-full">
         <Image 
           src="/spotify-icon.png" 
-          alt="Spotify" 
+          alt="Wave-jam Logo" 
           width={80} 
           height={80} 
           className="mb-6"
         />
-        <h2 className="text-2xl font-bold mb-4">Start listening with a free Spotify account</h2>
+        <h2 className="text-2xl font-bold mb-4">Start listening now</h2>
         <a href="/login" className="bg-green-500 hover:bg-green-400 text-black font-semibold py-3 px-8 rounded-full">
           Log in
         </a>
