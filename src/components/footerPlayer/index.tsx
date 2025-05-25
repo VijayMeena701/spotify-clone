@@ -1,14 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
-import Image from "next/image";
-import { 
-  Play, 
-  Pause, 
-  SkipBack, 
-  SkipForward, 
-  Repeat, 
-  Shuffle, 
-  Volume2, 
+import SafeImage from "../common/SafeImage";
+import {
+  Play,
+  Pause,
+  SkipBack,
+  SkipForward,
+  Repeat,
+  Shuffle,
+  Volume2,
   Mic2,
   ListMusic,
   Maximize2
@@ -23,22 +23,22 @@ import QueueModal from "./QueueModal";
 const FooterPlayer = () => {
   const { data: session } = useSession();
   const router = useRouter();
-  const { 
-    currentTrack, 
-    isPlaying, 
-    progress, 
-    volume, 
-    pauseTrack, 
-    resumeTrack, 
-    setVolume, 
-    nextTrack, 
+  const {
+    currentTrack,
+    isPlaying,
+    progress,
+    volume,
+    pauseTrack,
+    resumeTrack,
+    setVolume,
+    nextTrack,
     previousTrack,
     seekPosition,
     deviceId,
     queue,
     syncQueueWithSpotify
   } = usePlayer();
-  
+
   const [localVolume, setLocalVolume] = useState(volume);
   const [isInitialized, setIsInitialized] = useState(false);
   const [isQueueOpen, setIsQueueOpen] = useState(false);
@@ -63,7 +63,7 @@ const FooterPlayer = () => {
 
   const handleProgressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!currentTrack) return;
-    
+
     const newProgress = parseInt(e.target.value);
     const newPositionMs = (newProgress / 100) * currentTrack.duration_ms;
     seekPosition(newPositionMs);
@@ -103,17 +103,16 @@ const FooterPlayer = () => {
         {/* Song info */}
         <div className="flex items-center w-1/4">
           {currentTrack ? (
-            <>
-              <div className="relative w-14 h-14 mr-3">
-                <Image 
-                  src={currentTrack.album.images[0]?.url || "/spotify-icon.png"} 
-                  alt={currentTrack.album.name} 
-                  className="rounded object-cover"
-                  fill
-                />
-              </div>
+            <>              <div className="relative w-14 h-14 mr-3">
+              <SafeImage
+                src={currentTrack.album.images[0]?.url}
+                alt={currentTrack.album.name}
+                fill
+                className="rounded"
+              />
+            </div>
               <div>
-                <h4 onClick={()=> router.push(`/albums/${currentTrack.album.uri}`)} className="text-sm font-semibold text-white hover:underline hover:cursor-pointer">{currentTrack.name}</h4>
+                <h4 onClick={() => router.push(`/albums/${currentTrack.album.uri}`)} className="text-sm font-semibold text-white hover:underline hover:cursor-pointer">{currentTrack.name}</h4>
                 <p className="text-xs text-gray-400">{currentTrack.artists.map(a => a.name).join(", ")}</p>
               </div>
               <div className="ml-5">
@@ -149,21 +148,21 @@ const FooterPlayer = () => {
             <button className="text-gray-400 hover:text-white">
               <Shuffle size={18} />
             </button>
-            <button 
+            <button
               className="text-gray-400 hover:text-white"
               onClick={previousTrack}
               disabled={!deviceId || !currentTrack}
             >
               <SkipBack size={18} />
             </button>
-            <button 
+            <button
               className={`rounded-full p-2 text-black hover:scale-105 transition-transform ${deviceId ? 'bg-white' : 'bg-gray-400'}`}
               onClick={togglePlayPause}
               disabled={!deviceId || !currentTrack}
             >
               {isPlaying ? <Pause size={18} /> : <Play size={18} className="ml-0.5" />}
             </button>
-            <button 
+            <button
               className="text-gray-400 hover:text-white"
               onClick={nextTrack}
               disabled={!deviceId || !currentTrack}
@@ -201,7 +200,7 @@ const FooterPlayer = () => {
           <button className="text-gray-400 hover:text-white">
             <Mic2 size={16} />
           </button>
-          <button 
+          <button
             className={`${queue.length > 0 ? 'text-green-500' : 'text-gray-400'} hover:text-white relative`}
             onClick={toggleQueueModal}
             title="Queue"
@@ -239,10 +238,10 @@ const FooterPlayer = () => {
       </div>
 
       {/* Queue Modal */}
-      <QueueModal 
-        isOpen={isQueueOpen} 
-        onClose={() => setIsQueueOpen(false)} 
-        onSyncQueue={syncQueueWithSpotify} 
+      <QueueModal
+        isOpen={isQueueOpen}
+        onClose={() => setIsQueueOpen(false)}
+        onSyncQueue={syncQueueWithSpotify}
       />
     </>
   );

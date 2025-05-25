@@ -1,6 +1,6 @@
 "use client"
 import React from 'react'
-import Image from "next/image";
+import SafeImage from "@/src/components/common/SafeImage";
 import { Play } from "lucide-react";
 import { usePlayer } from '@/lib/PlayerContext';
 import { useSession } from 'next-auth/react';
@@ -43,13 +43,13 @@ const Recommended: React.FC<RecommendedTracksProps> = ({ loadingTrack, setLoadin
     };
 
     React.useEffect(() => {
-        if(!recommendedTracks && session) {
+        if (!recommendedTracks && session) {
             getRecommendedTracks(session).then(data => {
                 setRecommendedTracks(data);
             })
 
         }
-    },[recommendedTracks, session])
+    }, [recommendedTracks, session])
 
     return (
         <section className="mb-12">
@@ -61,34 +61,33 @@ const Recommended: React.FC<RecommendedTracksProps> = ({ loadingTrack, setLoadin
             <div className="bg-[#181818] p-6 rounded-md">
                 <div className="grid grid-cols-1 gap-2">
                     {recommendedTracks?.tracks?.slice(0, 5).map((track) => (
-                        <div key={track.id} className="flex items-center justify-between py-2 px-4 hover:bg-[#282828] rounded-md group">
-                            <div className="flex items-center flex-1">
-                                <div className="relative w-10 h-10 mr-4">
-                                    <Image
-                                        src={track.album?.images[0]?.url || "/spotify-icon.png"}
-                                        alt={track.album?.name}
-                                        className="rounded object-cover"
-                                        fill
-                                    />
-                                    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100">
-                                        <button
-                                            onClick={() => handlePlayTrack(track.id)}
-                                            disabled={loadingTrack === track.id}
-                                            className="text-white"
-                                        >
-                                            {loadingTrack === track.id ? (
-                                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                                            ) : (
-                                                <Play fill="white" size={16} className="ml-0.5" />
-                                            )}
-                                        </button>
-                                    </div>
-                                </div>
-                                <div>
-                                    <h3 className="font-medium text-white">{track.name}</h3>
-                                    <p className="text-sm text-gray-400">{track.artists.map(artist => artist.name).join(", ")}</p>
+                        <div key={track.id} className="flex items-center justify-between py-2 px-4 hover:bg-[#282828] rounded-md group">                            <div className="flex items-center flex-1">
+                            <div className="relative w-10 h-10 mr-4">
+                                <SafeImage
+                                    src={track.album?.images[0]?.url}
+                                    alt={track.album?.name}
+                                    className="rounded object-cover"
+                                    fill
+                                />
+                                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                                    <button
+                                        onClick={() => handlePlayTrack(track.id)}
+                                        disabled={loadingTrack === track.id}
+                                        className="text-white"
+                                    >
+                                        {loadingTrack === track.id ? (
+                                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                        ) : (
+                                            <Play fill="white" size={16} className="ml-0.5" />
+                                        )}
+                                    </button>
                                 </div>
                             </div>
+                            <div>
+                                <h3 className="font-medium text-white">{track.name}</h3>
+                                <p className="text-sm text-gray-400">{track.artists.map(artist => artist.name).join(", ")}</p>
+                            </div>
+                        </div>
                             <div className="flex items-center">
                                 <span className="text-sm text-gray-400 mr-4">
                                     {track.preview_url ? "Preview Available" : "No Preview"}

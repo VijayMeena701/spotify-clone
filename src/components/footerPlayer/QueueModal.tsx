@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { X, Play } from 'lucide-react';
 import { usePlayer } from '@/lib/PlayerContext';
 import { formatTime } from '@/lib/utils';
-import Image from 'next/image';
+import SafeImage from "../common/SafeImage";
 
 interface QueueModalProps {
   isOpen: boolean;
@@ -12,55 +12,53 @@ interface QueueModalProps {
 }
 
 const QueueModal = ({ isOpen, onClose, onSyncQueue }: QueueModalProps) => {
-  const { 
-    queue, 
-    removeFromQueue, 
+  const {
+    queue,
+    removeFromQueue,
     currentTrack,
     skipToNext
   } = usePlayer();
-  
+
   const [activeTab, setActiveTab] = useState<'queue' | 'history'>('queue');
   const [isSyncing, setIsSyncing] = useState(false);
-  
+
   // Handle escape key to close modal
   useEffect(() => {
     const handleEsc = (event: KeyboardEvent) => {
       if (event.key === 'Escape') onClose();
     };
-    
+
     if (isOpen) {
       window.addEventListener('keydown', handleEsc);
     }
-    
+
     return () => {
       window.removeEventListener('keydown', handleEsc);
     };
   }, [isOpen, onClose]);
-
   // Sync queue with Spotify when modal is opened
   useEffect(() => {
+    const handleSyncQueue = async () => {
+      if (onSyncQueue && !isSyncing) {
+        setIsSyncing(true);
+        onSyncQueue();
+        // Reset syncing state after a short delay
+        setTimeout(() => setIsSyncing(false), 1000);
+      }
+    };
+
     if (isOpen) {
       handleSyncQueue();
     }
-  }, [isOpen]);
-
+  }, [isOpen, onSyncQueue, isSyncing]);
   if (!isOpen) return null;
-
-  const handleSyncQueue = async () => {
-    if (onSyncQueue && !isSyncing) {
-      setIsSyncing(true);
-      onSyncQueue();
-      // Reset syncing state after a short delay
-      setTimeout(() => setIsSyncing(false), 1000);
-    }
-  };
 
   const handleSkipToTrack = async (trackId: string) => {
     // Skip until we reach the desired track
     while (queue.length > 0 && queue[0].id !== trackId) {
       await skipToNext();
     }
-    
+
     if (queue.length > 0 && queue[0].id === trackId) {
       await skipToNext();
     }
@@ -76,7 +74,7 @@ const QueueModal = ({ isOpen, onClose, onSyncQueue }: QueueModalProps) => {
         {/* Header */}
         <div className="flex justify-between items-center p-4 border-b border-gray-700">
           <h2 className="text-xl font-bold text-white">Play Queue</h2>
-          <button 
+          <button
             className="text-gray-400 hover:text-white p-1"
             onClick={onClose}
           >
@@ -86,13 +84,13 @@ const QueueModal = ({ isOpen, onClose, onSyncQueue }: QueueModalProps) => {
 
         {/* Tabs */}
         <div className="flex border-b border-gray-700">
-          <button 
+          <button
             className={`px-4 py-2 text-sm font-medium ${activeTab === 'queue' ? 'text-green-500 border-b-2 border-green-500' : 'text-gray-400'}`}
             onClick={() => setActiveTab('queue')}
           >
             Queue
           </button>
-          <button 
+          <button
             className={`px-4 py-2 text-sm font-medium ${activeTab === 'history' ? 'text-green-500 border-b-2 border-green-500' : 'text-gray-400'}`}
             onClick={() => setActiveTab('history')}
           >
@@ -106,16 +104,15 @@ const QueueModal = ({ isOpen, onClose, onSyncQueue }: QueueModalProps) => {
           {currentTrack && (
             <div className="mb-4">
               <h3 className="text-sm text-gray-400 mb-2 uppercase font-semibold">Now playing</h3>
-              <div className="flex items-center hover:bg-[#3E3E3E] p-2 rounded-md group">
-                <div className="relative w-12 h-12 mr-3 flex-shrink-0">
-                  <Image 
-                    src={currentTrack.album.images[0]?.url || "/spotify-icon.png"} 
-                    alt={currentTrack.album.name} 
-                    className="rounded object-cover"
-                    width={48}
-                    height={48}
-                  />
-                </div>
+              <div className="flex items-center hover:bg-[#3E3E3E] p-2 rounded-md group">                <div className="relative w-12 h-12 mr-3 flex-shrink-0">
+                <SafeImage
+                  src={currentTrack.album.images[0]?.url}
+                  alt={currentTrack.album.name}
+                  width={48}
+                  height={48}
+                  className="rounded"
+                />
+              </div>
                 <div className="flex-grow">
                   <p className="text-white text-sm truncate">{currentTrack.name}</p>
                   <p className="text-gray-400 text-xs truncate">{currentTrack.artists.map(a => a.name).join(", ")}</p>
@@ -126,7 +123,7 @@ const QueueModal = ({ isOpen, onClose, onSyncQueue }: QueueModalProps) => {
               </div>
             </div>
           )}
-          
+
           {/* Queue */}
           {activeTab === 'queue' && (
             <>
@@ -136,24 +133,23 @@ const QueueModal = ({ isOpen, onClose, onSyncQueue }: QueueModalProps) => {
               ) : (
                 // Create a unique list of tracks based on track ID
                 [...new Map(queue.map(track => [track.id, track])).values()].map((track) => (
-                  <div key={track.id} className="flex items-center hover:bg-[#3E3E3E] p-2 rounded-md group">
-                    <div className="relative w-12 h-12 mr-3 flex-shrink-0">
-                      <Image 
-                        src={track.album.images[0]?.url || "/spotify-icon.png"} 
-                        alt={track.album.name} 
-                        className="rounded object-cover"
-                        width={48}
-                        height={48}
-                      />
-                      <div className="absolute inset-0 bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 flex items-center justify-center">
-                        <button 
-                          className="text-white hover:scale-110 transition-transform"
-                          onClick={() => handleSkipToTrack(track.id)}
-                        >
-                          <Play size={20} fill="white" />
-                        </button>
-                      </div>
+                  <div key={track.id} className="flex items-center hover:bg-[#3E3E3E] p-2 rounded-md group">                    <div className="relative w-12 h-12 mr-3 flex-shrink-0">
+                    <SafeImage
+                      src={track.album.images[0]?.url}
+                      alt={track.album.name}
+                      width={48}
+                      height={48}
+                      className="rounded"
+                    />
+                    <div className="absolute inset-0 bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 flex items-center justify-center">
+                      <button
+                        className="text-white hover:scale-110 transition-transform"
+                        onClick={() => handleSkipToTrack(track.id)}
+                      >
+                        <Play size={20} fill="white" />
+                      </button>
                     </div>
+                  </div>
                     <div className="flex-grow">
                       <p className="text-white text-sm truncate">{track.name}</p>
                       <p className="text-gray-400 text-xs truncate">{track.artists.map(a => a.name).join(", ")}</p>
@@ -161,7 +157,7 @@ const QueueModal = ({ isOpen, onClose, onSyncQueue }: QueueModalProps) => {
                     <div className="text-gray-400 text-xs px-2">
                       {formatTime(track.duration_ms / 1000)}
                     </div>
-                    <button 
+                    <button
                       className="text-gray-400 hover:text-white opacity-0 group-hover:opacity-100"
                       onClick={() => handleRemoveFromQueue(track.id)}
                     >
@@ -170,7 +166,7 @@ const QueueModal = ({ isOpen, onClose, onSyncQueue }: QueueModalProps) => {
                   </div>
                 ))
               )}
-              
+
               {/* Add more button at the end */}
               <div className="mt-4 text-center">
                 <p className="text-gray-400 text-sm">Want to add more tracks?</p>

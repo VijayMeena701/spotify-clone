@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
-import NextImage from 'next/image';
+import SafeImage from "@/src/components/common/SafeImage";
 import Link from 'next/link';
 import { Play, Pause, Clock3 } from 'lucide-react';
 import { searchSpotify } from '@/lib/spotify';
@@ -202,7 +202,7 @@ const SearchPage = () => {
                           )}>
                             {index + 1}
                           </span>
-                          <div 
+                          <div
                             className={cn(
                               "absolute inset-0 hidden group-hover:flex items-center justify-center",
                               isTrackPlaying(track.id) ? "flex group-hover:flex" : "hidden group-hover:flex"
@@ -218,15 +218,14 @@ const SearchPage = () => {
                         </div>
                       </td>
                       <td className="py-3" onClick={() => handlePlayTrack(track)}>
-                        <div className="flex items-center">
-                          <div className="relative min-w-[40px] w-[40px] h-[40px] mr-3">
-                            <NextImage
-                              src={track.album.images?.[0]?.url || "/spotify-icon.png"}
-                              alt={track.album.name}
-                              className="object-cover rounded"
-                              fill
-                            />
-                          </div>
+                        <div className="flex items-center">                          <div className="relative min-w-[40px] w-[40px] h-[40px] mr-3">
+                          <SafeImage
+                            src={track.album.images?.[0]?.url}
+                            alt={track.album.name}
+                            fill
+                            className="rounded"
+                          />
+                        </div>
                           <div className="flex flex-col">
                             <span className={cn(
                               "font-medium",
@@ -241,7 +240,7 @@ const SearchPage = () => {
                         </div>
                       </td>
                       <td className="py-3 text-gray-400">
-                        <Link 
+                        <Link
                           href={`/albums/${track.album.id}`}
                           className="hover:underline hover:text-white"
                         >
@@ -271,17 +270,16 @@ const SearchPage = () => {
               <h2 className="text-xl font-bold mb-4">Artists</h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
                 {searchResults.artists.items.map((artist) => (
-                  <Link 
-                    key={artist.id} 
+                  <Link
+                    key={artist.id}
                     href={`/artists/${artist.id}`}
                     className="group bg-[#181818] hover:bg-[#282828] p-4 rounded-md transition-colors"
-                  >
-                    <div className="relative aspect-square w-full mb-4">
-                      <NextImage
-                        src={artist.images?.[0]?.url || "/spotify-icon.png"}
+                  >                    <div className="relative aspect-square w-full mb-4">
+                      <SafeImage
+                        src={artist.images?.[0]?.url}
                         alt={artist.name}
-                        className="rounded-full object-cover"
                         fill
+                        className="rounded-full"
                       />
                     </div>
                     <h3 className="font-bold truncate">{artist.name}</h3>
@@ -298,17 +296,16 @@ const SearchPage = () => {
               <h2 className="text-xl font-bold mb-4">Albums</h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
                 {searchResults.albums.items.map((album) => (
-                  <Link 
-                    key={album.id} 
+                  <Link
+                    key={album.id}
                     href={`/albums/${album.id}`}
                     className="group bg-[#181818] hover:bg-[#282828] p-4 rounded-md transition-colors"
-                  >
-                    <div className="relative aspect-square w-full mb-4 shadow-lg">
-                      <NextImage
-                        src={album.images?.[0]?.url || "/spotify-icon.png"}
+                  >                    <div className="relative aspect-square w-full mb-4 shadow-lg">
+                      <SafeImage
+                        src={album.images?.[0]?.url}
                         alt={album.name}
-                        className="rounded object-cover"
                         fill
+                        className="rounded"
                       />
                       <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <div className="bg-green-500 rounded-full p-2 shadow-lg">
@@ -332,17 +329,16 @@ const SearchPage = () => {
               <h2 className="text-xl font-bold mb-4">Playlists</h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
                 {searchResults.playlists.items.filter(item => item !== null && item !== undefined).map((playlist) => (
-                  <Link 
-                    key={playlist.id} 
+                  <Link
+                    key={playlist.id}
                     href={`/playlists/${playlist.id}`}
                     className="group bg-[#181818] hover:bg-[#282828] p-4 rounded-md transition-colors"
-                  >
-                    <div className="relative aspect-square w-full mb-4 shadow-lg">
-                      <NextImage
-                        src={playlist.images?.[0]?.url || "/spotify-icon.png"}
+                  >                    <div className="relative aspect-square w-full mb-4 shadow-lg">
+                      <SafeImage
+                        src={playlist.images?.[0]?.url}
                         alt={playlist.name}
-                        className="rounded object-cover"
                         fill
+                        className="rounded"
                       />
                       <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <div className="bg-green-500 rounded-full p-2 shadow-lg">

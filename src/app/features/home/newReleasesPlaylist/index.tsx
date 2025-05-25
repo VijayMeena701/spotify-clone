@@ -1,5 +1,5 @@
 import React from 'react';
-import Image from "next/image";
+import SafeImage from "@/src/components/common/SafeImage";
 import { useSession } from 'next-auth/react';
 import { Play } from "lucide-react";
 import { usePlayer } from '@/lib/PlayerContext';
@@ -62,7 +62,7 @@ const NewReleases: React.FC<NewReleasesProps> = ({ loadingTrack, setLoadingTrack
                 setNewReleases(data);
             })
         }
-    },[newReleases, session])
+    }, [newReleases, session])
 
     return (
         <section className="mb-12">
@@ -72,51 +72,50 @@ const NewReleases: React.FC<NewReleasesProps> = ({ loadingTrack, setLoadingTrack
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
                 {newReleases?.albums.items.slice(0, 6).map((album) => (
-                    <div key={album.id} className="bg-[#181818] p-4 rounded-md hover:bg-[#282828] transition-colors group cursor-pointer">
-                        <div className="relative mb-4">
-                            <div className="aspect-square w-full rounded-md overflow-hidden shadow-lg">
-                                <Image
-                                    src={album.images[0]?.url || "/spotify-icon.png"}
-                                    alt={album.name}
-                                    className="object-cover"
-                                    fill
-                                />
-                            </div>
-                            <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button
-                                    className="bg-green-500 rounded-full p-3 shadow-lg hover:scale-110 transition-transform"
-                                    onClick={() => {
-                                        if (session && album.id) {
-                                            setLoadingTrack(album.id);
-                                            // For albums, we need to get the first track ID
-                                            getPlaylistTracks(album.id, session)
-                                                .then(tracks => {
-                                                    if (tracks && tracks.items && tracks.items.length > 0) {
-                                                        const firstTrack = tracks.items[0].track;
-                                                        if (firstTrack && firstTrack.id) {
-                                                            return playTrack(firstTrack.id, session);
-                                                        }
-                                                    }
-                                                    throw new Error("No tracks found");
-                                                })
-                                                .catch(err => {
-                                                    console.error("Error playing album:", err);
-                                                })
-                                                .finally(() => {
-                                                    setLoadingTrack(null);
-                                                });
-                                        }
-                                    }}
-                                    disabled={loadingTrack === album.id}
-                                >
-                                    {loadingTrack === album.id ? (
-                                        <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
-                                    ) : (
-                                        <Play fill="black" size={16} className="text-black ml-0.5" />
-                                    )}
-                                </button>
-                            </div>
+                    <div key={album.id} className="bg-[#181818] p-4 rounded-md hover:bg-[#282828] transition-colors group cursor-pointer">                        <div className="relative mb-4">
+                        <div className="aspect-square w-full rounded-md overflow-hidden shadow-lg">
+                            <SafeImage
+                                src={album.images[0]?.url}
+                                alt={album.name}
+                                className="object-cover"
+                                fill
+                            />
                         </div>
+                        <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button
+                                className="bg-green-500 rounded-full p-3 shadow-lg hover:scale-110 transition-transform"
+                                onClick={() => {
+                                    if (session && album.id) {
+                                        setLoadingTrack(album.id);
+                                        // For albums, we need to get the first track ID
+                                        getPlaylistTracks(album.id, session)
+                                            .then(tracks => {
+                                                if (tracks && tracks.items && tracks.items.length > 0) {
+                                                    const firstTrack = tracks.items[0].track;
+                                                    if (firstTrack && firstTrack.id) {
+                                                        return playTrack(firstTrack.id, session);
+                                                    }
+                                                }
+                                                throw new Error("No tracks found");
+                                            })
+                                            .catch(err => {
+                                                console.error("Error playing album:", err);
+                                            })
+                                            .finally(() => {
+                                                setLoadingTrack(null);
+                                            });
+                                    }
+                                }}
+                                disabled={loadingTrack === album.id}
+                            >
+                                {loadingTrack === album.id ? (
+                                    <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+                                ) : (
+                                    <Play fill="black" size={16} className="text-black ml-0.5" />
+                                )}
+                            </button>
+                        </div>
+                    </div>
                         <h3 className="text-base font-bold truncate">{album.name}</h3>
                         <p className="text-sm text-gray-400 mt-1">{album.artists.map(artist => artist.name).join(", ")}</p>
                     </div>

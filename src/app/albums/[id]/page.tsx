@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import NextImage from 'next/image';
+import SafeImage from '@/src/components/common/SafeImage';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { getAlbum, getAlbumTracks, getArtistAlbums } from '@/lib/spotify';
@@ -63,7 +63,7 @@ const AlbumPage = ({ params }: { params: Promise<{ id: string }> }) => {
                 const allArtistAlbums = albumsByArtists
                     .filter(result => result.status === 'fulfilled' && result.value && result.value.items)
                     .flatMap(result => (result as PromiseFulfilledResult<ArtistAlbum>).value.items)
-                    .filter((album, index, self) => 
+                    .filter((album, index, self) =>
                         self.findIndex(a => a.id === album.id) === index
                     );
 
@@ -91,40 +91,44 @@ const AlbumPage = ({ params }: { params: Promise<{ id: string }> }) => {
             } finally {
                 setLoading(false);
             }
-        };
-
-        if (session && tracks.length === 0) {
+        }; if (session && !album) {
             fetchAlbumData();
         }
-    }, [albumId, session]);
+    }, [albumId, session, album]);// Extract dominant color from album artwork
+    useEffect(() => {
+        if (album?.images?.[0]?.url) {
+            const extractColor = async () => {
+                try {
+                    // Create a temporary image to analyze
+                    const img = new Image();
+                    img.crossOrigin = 'Anonymous';
+                    img.src = album.images[0].url;
 
-    // New effect to extract dominant color from album artwork
-    // useEffect(() => {
-    //     if (album?.images?.[0]?.url) {
-    //         const extractColor = async () => {
-    //             try {
-    //                 // Create a temporary image to analyze
-    //                 const img = new Image();
-    //                 img.crossOrigin = 'Anonymous';
-    //                 img.src = album.images[0].url;
+                    img.onload = () => {
+                        try {
+                            const colorThief = new ColorThief();
+                            const color = colorThief.getColor(img);
+                            // Convert RGB array to CSS color string
+                            setDominantColor(`rgb(${color[0]}, ${color[1]}, ${color[2]})`);
+                        } catch (colorErr) {
+                            console.error('Error extracting color from image:', colorErr);
+                            setDominantColor(null);
+                        }
+                    };
 
-    //                 img.onload = () => {
-    //                     const colorThief = new ColorThief();
-    //                     const color = colorThief.getColor(img);
-    //                     console.log(color)
-    //                     // Convert RGB array to CSS color string
-    //                     setDominantColor(`${color}`);
-    //                 };
-    //             } catch (err) {
-    //                 console.error('Error extracting color:', err);
-    //                 // Fallback to default gradient if color extraction fails
-    //                 setDominantColor(null);
-    //             }
-    //         };
+                    img.onerror = () => {
+                        console.error('Error loading image for color extraction');
+                        setDominantColor(null);
+                    };
+                } catch (err) {
+                    console.error('Error setting up color extraction:', err);
+                    setDominantColor(null);
+                }
+            };
 
-    //         extractColor();
-    //     }
-    // }, [album]);
+            extractColor();
+        }
+    }, [album]);
 
     const handlePlayAlbum = () => {
         if (!tracks.length || !session) return;
@@ -133,8 +137,8 @@ const AlbumPage = ({ params }: { params: Promise<{ id: string }> }) => {
         playTrack(tracks[0].id, session);
 
         // add rest tracks to queue
-        tracks.forEach((track) => addToQueue({...track, album:{images:[], uri:"", name:""}}));
-        
+        tracks.forEach((track) => addToQueue({ ...track, album: { images: [], uri: "", name: "" } }));
+
     };
 
     const handlePlayTrack = (track: TrackProps) => {
@@ -213,19 +217,22 @@ const AlbumPage = ({ params }: { params: Promise<{ id: string }> }) => {
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                 }}
-            >
-                <div className="relative min-w-[200px] w-[200px] h-[200px] shadow-2xl">
-                    <NextImage
-                        src={album.images?.[0]?.url || "/spotify-icon.png"}
+            >                <div className="relative min-w-[200px] w-[200px] h-[200px] shadow-2xl">
+                    <SafeImage
+                        src={album.images?.[0]?.url}
                         alt={album.name}
-                        className="object-cover"
                         fill
                         priority
-                        onLoad={(event) => {
+                        onLoad={(event: React.SyntheticEvent<HTMLImageElement>) => {
                             const img = event.currentTarget as HTMLImageElement;
-                            const colorThief = new ColorThief();
-                            const color = colorThief.getColor(img);
-                            setDominantColor(`${color}`);
+                            try {
+                                const colorThief = new ColorThief();
+                                const color = colorThief.getColor(img);
+                                setDominantColor(`rgb(${color[0]}, ${color[1]}, ${color[2]})`);
+                            } catch (err) {
+                                console.error('Error extracting color:', err);
+                                setDominantColor(null);
+                            }
                         }}
                     />
                 </div>
@@ -353,20 +360,19 @@ const AlbumPage = ({ params }: { params: Promise<{ id: string }> }) => {
                     <h2 className="text-2xl font-bold mb-6">
                         More by {album.artists[0].name}
                     </h2>
-                    
+
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
                         {artistAlbums?.map((relatedAlbum) => (
-                            <Link 
-                                href={`/albums/${relatedAlbum.id}`} 
+                            <Link
+                                href={`/albums/${relatedAlbum.id}`}
                                 key={relatedAlbum.id}
                                 className="group flex flex-col bg-gray-900 p-4 rounded-md hover:bg-gray-800 transition-colors duration-200"
-                            >
-                                <div className="relative aspect-square w-full mb-4 shadow-lg">
-                                    <NextImage 
-                                        src={relatedAlbum.images?.[0]?.url || "/spotify-icon.png"}
+                            >                                <div className="relative aspect-square w-full mb-4 shadow-lg">
+                                    <SafeImage
+                                        src={relatedAlbum.images?.[0]?.url}
                                         alt={relatedAlbum.name}
-                                        className="object-cover rounded-md"
                                         fill
+                                        className="rounded-md"
                                     />
                                     <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                         <div className="bg-green-500 rounded-full p-2 shadow-lg">

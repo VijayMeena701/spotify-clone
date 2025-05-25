@@ -2,7 +2,7 @@
 import { getFeaturedPlaylists } from "@/lib/spotify";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import Image from "next/image";
+import SafeImage from "@/src/components/common/SafeImage";
 import { Play } from "lucide-react";
 import Sidebar from "@/src/components/sidebar";
 import FooterPlayer from "@/src/components/footerPlayer";
@@ -35,7 +35,7 @@ export default function FeaturedPlaylistsPage() {
     if (session) {
       setLoading(true);
       setError(null);
-      
+
       getFeaturedPlaylists(session)
         .then((data) => {
           setFeaturedPlaylists(data);
@@ -52,12 +52,12 @@ export default function FeaturedPlaylistsPage() {
   // Handler for playing a track from a playlist
   const handlePlayPlaylist = async (playlistId: string) => {
     if (!session) return;
-    
+
     try {
       setLoadingTrack(playlistId);
       // Get the first track from the playlist
       const playlistTracks = await getPlaylistTracks(playlistId, session);
-      
+
       if (playlistTracks && playlistTracks.items && playlistTracks.items.length > 0) {
         const firstTrack = playlistTracks.items[0].track;
         if (firstTrack && firstTrack.id) {
@@ -100,14 +100,13 @@ export default function FeaturedPlaylistsPage() {
         <div className="flex h-full">
           <Sidebar />
           <div className="flex-1 flex flex-col h-full overflow-hidden">
-            <div className="flex flex-col items-center justify-center h-full">
-              <Image 
-                src="/spotify-icon.png" 
-                alt="Spotify" 
-                width={80} 
-                height={80} 
-                className="mb-6"
-              />
+            <div className="flex flex-col items-center justify-center h-full">              <SafeImage
+              src="/spotify-icon.png"
+              alt="Spotify"
+              width={80}
+              height={80}
+              className="mb-6"
+            />
               <h2 className="text-2xl font-bold mb-4">Start listening with a free Spotify account</h2>
               <a href="/login" className="bg-green-500 hover:bg-green-400 text-black font-semibold py-3 px-8 rounded-full">
                 Log in
@@ -140,8 +139,8 @@ export default function FeaturedPlaylistsPage() {
             {error && (
               <div className="bg-red-900/30 border border-red-500 text-white p-4 rounded-md mb-8">
                 <p>{error}</p>
-                <button 
-                  onClick={() => window.location.reload()} 
+                <button
+                  onClick={() => window.location.reload()}
                   className="mt-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md"
                 >
                   Retry
@@ -153,17 +152,15 @@ export default function FeaturedPlaylistsPage() {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
               {featuredPlaylists?.playlists.items.map((playlist) => (
                 <div key={playlist.id} className="bg-[#181818] p-4 rounded-md hover:bg-[#282828] transition-colors group cursor-pointer">
-                  <div className="relative mb-4">
-                    <div className="aspect-square w-full rounded-md overflow-hidden shadow-lg">
-                      <Image 
-                        src={playlist.images[0]?.url || "/spotify-icon.png"} 
-                        alt={playlist.name} 
-                        className="object-cover" 
-                        fill
-                      />
-                    </div>
+                  <div className="relative mb-4">                    <div className="aspect-square w-full rounded-md overflow-hidden shadow-lg">
+                    <SafeImage
+                      src={playlist.images[0]?.url}
+                      alt={playlist.name}
+                      fill
+                    />
+                  </div>
                     <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button 
+                      <button
                         className="bg-green-500 rounded-full p-3 shadow-lg hover:scale-110 transition-transform"
                         onClick={() => handlePlayPlaylist(playlist.id)}
                         disabled={loadingTrack === playlist.id}
@@ -186,8 +183,8 @@ export default function FeaturedPlaylistsPage() {
             {(!featuredPlaylists || featuredPlaylists.playlists.items.length === 0) && !loading && !error && (
               <div className="flex flex-col items-center justify-center py-16">
                 <p className="text-gray-400 text-lg mb-4">No featured playlists available right now</p>
-                <button 
-                  onClick={() => window.location.reload()} 
+                <button
+                  onClick={() => window.location.reload()}
                   className="bg-white text-black font-bold py-2 px-6 rounded-full hover:bg-opacity-80"
                 >
                   Refresh
@@ -210,10 +207,10 @@ async function getPlaylistTracks(playlistId: string, session: Session) {
       Authorization: `Bearer ${session.accessToken}`
     }
   });
-  
+
   if (!result.ok) {
     throw new Error('Failed to fetch playlist tracks');
   }
-  
+
   return await result.json();
 }

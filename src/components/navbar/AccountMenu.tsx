@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import Image from "next/image";
+import SafeImage from "@/src/components/common/SafeImage";
 import { LogOut, User, Settings, HelpCircle, ExternalLink } from "lucide-react";
 
 export default function AccountMenu() {
@@ -18,7 +18,7 @@ export default function AccountMenu() {
         setIsOpen(false);
       }
     }
-    
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -27,7 +27,7 @@ export default function AccountMenu() {
 
   if (!session) {
     return (
-      <div className="flex items-center gap-2">
+      <div className="relative flex items-center gap-2 z-10">
         <Link
           href="/signup"
           className="text-sm text-gray-400 hover:text-white px-4 py-2 font-medium"
@@ -45,15 +45,15 @@ export default function AccountMenu() {
   }
 
   const userImage = session.user?.image || "/spotify-icon.png";
-  
+
   return (
-    <div className="relative" ref={menuRef}>
+    <div className="relative z-10" ref={menuRef}>
       <button
         className="flex items-center gap-2 bg-black hover:bg-zinc-800 rounded-full p-0.5 pr-2 transition"
         onClick={() => setIsOpen(!isOpen)}
       >
         <div className="w-8 h-8 relative rounded-full overflow-hidden">
-          <Image
+          <SafeImage
             src={userImage}
             alt={session.user?.name || "User"}
             fill
@@ -105,9 +105,9 @@ export default function AccountMenu() {
               <Settings size={16} />
               Settings
             </Link>
-            <a 
-              href="https://support.spotify.com" 
-              target="_blank" 
+            <a
+              href="https://support.spotify.com"
+              target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-3 px-4 py-2 text-sm text-white hover:bg-[#3E3E3E]"
               onClick={() => setIsOpen(false)}
@@ -116,12 +116,25 @@ export default function AccountMenu() {
               Support
               <ExternalLink size={12} className="ml-auto" />
             </a>
-          </div>
-          <div className="py-1">
+          </div>          <div className="py-1">
             <button
-              onClick={() => {
-                signOut({ callbackUrl: "/" });
-                setIsOpen(false);
+              onClick={async () => {
+                try {
+                  setIsOpen(false);
+                  // Clear any local storage or session storage if needed
+                  localStorage.clear();
+                  sessionStorage.clear();
+
+                  // Sign out with proper callback
+                  await signOut({
+                    callbackUrl: "/",
+                    redirect: true
+                  });
+                } catch (error) {
+                  console.error("Logout error:", error);
+                  // Force redirect even if signOut fails
+                  window.location.href = "/";
+                }
               }}
               className="flex w-full items-center gap-3 px-4 py-2 text-sm text-white hover:bg-[#3E3E3E]"
             >

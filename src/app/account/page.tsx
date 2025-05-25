@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
+import SafeImage from "@/src/components/common/SafeImage";
 import { ChevronRight, User, Settings, Bell, Shield, CreditCard } from "lucide-react";
 
 export default function AccountPage() {
@@ -36,33 +36,32 @@ export default function AccountPage() {
           <h1 className="text-3xl font-bold mb-8">Account</h1>
 
           {/* Profile Summary Card */}
-          <div className="bg-zinc-800 rounded-lg p-6 mb-8">
-            <div className="flex items-center gap-6">
-              <div className="relative w-24 h-24 rounded-full overflow-hidden">
-                <Image 
-                  src={userImage} 
-                  alt={userName}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="flex-1">
-                <h2 className="text-2xl font-bold">{userName}</h2>
-                <p className="text-gray-400">{userEmail}</p>
-              </div>
-              <Link 
-                href="/account/profile" 
-                className="bg-transparent hover:bg-white/10 text-white px-6 py-3 rounded-full border border-gray-600 transition-colors"
-              >
-                Edit profile
-              </Link>
+          <div className="bg-zinc-800 rounded-lg p-6 mb-8">            <div className="flex items-center gap-6">
+            <div className="relative w-24 h-24 rounded-full overflow-hidden">
+              <SafeImage
+                src={userImage}
+                alt={userName}
+                fill
+                className="object-cover"
+              />
             </div>
+            <div className="flex-1">
+              <h2 className="text-2xl font-bold">{userName}</h2>
+              <p className="text-gray-400">{userEmail}</p>
+            </div>
+            <Link
+              href="/account/profile"
+              className="bg-transparent hover:bg-white/10 text-white px-6 py-3 rounded-full border border-gray-600 transition-colors"
+            >
+              Edit profile
+            </Link>
+          </div>
           </div>
 
           {/* Account Settings Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Link 
-              href="/account/profile" 
+            <Link
+              href="/account/profile"
               className="bg-zinc-800 hover:bg-zinc-700 rounded-lg p-6 transition-colors group"
             >
               <div className="flex items-center justify-between">
@@ -79,8 +78,8 @@ export default function AccountPage() {
               </div>
             </Link>
 
-            <Link 
-              href="/account/settings" 
+            <Link
+              href="/account/settings"
               className="bg-zinc-800 hover:bg-zinc-700 rounded-lg p-6 transition-colors group"
             >
               <div className="flex items-center justify-between">
@@ -97,8 +96,8 @@ export default function AccountPage() {
               </div>
             </Link>
 
-            <Link 
-              href="/account/notifications" 
+            <Link
+              href="/account/notifications"
               className="bg-zinc-800 hover:bg-zinc-700 rounded-lg p-6 transition-colors group"
             >
               <div className="flex items-center justify-between">
@@ -115,8 +114,8 @@ export default function AccountPage() {
               </div>
             </Link>
 
-            <Link 
-              href="/account/privacy" 
+            <Link
+              href="/account/privacy"
               className="bg-zinc-800 hover:bg-zinc-700 rounded-lg p-6 transition-colors group"
             >
               <div className="flex items-center justify-between">
@@ -133,8 +132,8 @@ export default function AccountPage() {
               </div>
             </Link>
 
-            <Link 
-              href="/account/subscription" 
+            <Link
+              href="/account/subscription"
               className="bg-zinc-800 hover:bg-zinc-700 rounded-lg p-6 transition-colors group md:col-span-2"
             >
               <div className="flex items-center justify-between">

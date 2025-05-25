@@ -1,5 +1,5 @@
 import React from 'react';
-import Image from "next/image";
+import SafeImage from "@/src/components/common/SafeImage";
 import { useSession } from 'next-auth/react';
 import { usePlayer } from '@/lib/PlayerContext';
 import { Play } from 'lucide-react';
@@ -97,30 +97,29 @@ const UserPlaylist: React.FC<UserPlaylistProps> = ({ loadingTrack, setLoadingTra
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
                 {(userPlaylists || { items: [] })?.items?.slice(0, 6).map((playlist) => (
-                    <div key={playlist.id} className="bg-[#181818] p-4 rounded-md hover:bg-[#282828] transition-colors group cursor-pointer">
-                        <div className="relative mb-4">
-                            <div className="aspect-square w-full rounded-md overflow-hidden shadow-lg">
-                                <Image
-                                    src={playlist?.images?.[0]?.url || "/spotify-icon.png"}
-                                    alt={playlist.name}
-                                    className="object-cover"
-                                    fill
-                                />
-                            </div>
-                            <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button
-                                    className="bg-green-500 rounded-full p-3 shadow-lg hover:scale-110 transition-transform"
-                                    onClick={() => handlePlayPlaylist(playlist.id)}
-                                    disabled={loadingTrack === playlist.id}
-                                >
-                                    {loadingTrack === playlist.id ? (
-                                        <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
-                                    ) : (
-                                        <Play fill="black" size={16} className="text-black ml-0.5" />
-                                    )}
-                                </button>
-                            </div>
+                    <div key={playlist.id} className="bg-[#181818] p-4 rounded-md hover:bg-[#282828] transition-colors group cursor-pointer">                        <div className="relative mb-4">
+                        <div className="aspect-square w-full rounded-md overflow-hidden shadow-lg">
+                            <SafeImage
+                                src={playlist?.images?.[0]?.url}
+                                alt={playlist.name}
+                                className="object-cover"
+                                fill
+                            />
                         </div>
+                        <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button
+                                className="bg-green-500 rounded-full p-3 shadow-lg hover:scale-110 transition-transform"
+                                onClick={() => handlePlayPlaylist(playlist.id)}
+                                disabled={loadingTrack === playlist.id}
+                            >
+                                {loadingTrack === playlist.id ? (
+                                    <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+                                ) : (
+                                    <Play fill="black" size={16} className="text-black ml-0.5" />
+                                )}
+                            </button>
+                        </div>
+                    </div>
                         <h3 className="text-base font-bold truncate">{playlist.name}</h3>
                         <p className="text-sm text-gray-400 mt-1">Your playlist</p>
                     </div>
