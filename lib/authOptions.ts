@@ -86,7 +86,6 @@ export const authOptions: NextAuthConfig = {
   ],
   callbacks: {
     jwt: async ({ token, account, user }) => {
-      // Initial sign in
       if (account && user) {
         return {
           ...token,
@@ -121,12 +120,7 @@ export const authOptions: NextAuthConfig = {
       session.error = token.error as string;
       return session;
     },
-    // authorized({ request, auth }) {
-    //   console.log("Authorized", auth);
-    //   return !!auth?.user; // Ensure there's a logged in user for every request
-    // },
     signIn: async ({ user, account, profile }) => {
-      console.log("Sign In", user, account, profile);
       return true;
     }
   },
