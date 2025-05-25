@@ -99,7 +99,7 @@ const FooterPlayer = () => {
 
   return (
     <>
-      <div className="fixed bottom-0 left-0 right-0 bg-[#181818] border-t border-gray-900 p-4 h-24 flex items-center justify-between">
+      <div className="fixed bottom-0 left-0 right-0 bg-[#181818] border-t border-gray-900 p-4 h-24 flex items-center justify-between z-[100]">
         {/* Song info */}
         <div className="flex items-center w-1/4">
           {currentTrack ? (

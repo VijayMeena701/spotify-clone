@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import LoginForm from "@/src/components/auth/LoginForm";
-import Image from "next/image";
+// import Image from "next/image";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -10,9 +10,9 @@ export const metadata: Metadata = {
 
 export default function LoginPage() {
   return (
-    <main className="flex min-h-[calc(100vh-64px)] flex-col items-center justify-center p-4 bg-gradient-to-b from-neutral-900 to-black text-white">
+    <main className="flex min-h-[calc(100vh-96px)] flex-col items-center justify-center p-4 bg-gradient-to-b from-neutral-900 to-black text-white">
       <div className="w-full max-w-md space-y-8">
-        <div className="text-center">
+        {/* <div className="text-center">
           <Link href="/" className="inline-block">
             <Image
               src="/logo.png"
@@ -27,8 +27,8 @@ export default function LoginPage() {
           <p className="mt-2 text-sm text-neutral-400">
             Continue your musical journey
           </p>
-        </div>
-        
+        </div> */}
+
         <LoginForm />
 
         <div className="text-center mt-4">

@@ -31,11 +31,11 @@ function HomeSection() {
   if (!session) {
     return (
       <div className="flex flex-col items-center justify-center h-full">
-        <Image 
-          src="/spotify-icon.png" 
-          alt="Wave-jam Logo" 
-          width={80} 
-          height={80} 
+        <Image
+          src="/logo.png"
+          alt="Wave-jam Logo"
+          width={80}
+          height={80}
           className="mb-6"
         />
         <h2 className="text-2xl font-bold mb-4">Start listening now</h2>
@@ -102,18 +102,18 @@ function HomeSection() {
 }
 
 export default function Home() {
-	return (
-		<>
-			<Navbar />
-			<div className="flex h-full">
-				{/* Sidebar */}
-				<Sidebar />
-				
-				{/* Main Content */}
-				<div className="flex-1 flex flex-col h-full overflow-hidden">
-					<HomeSection />
-				</div>
-			</div>
-		</>
-	)
+  return (
+    <>
+      <Navbar />
+      <div className="flex h-full h-[calc(100dvh-96px-64px)]">
+        {/* Sidebar */}
+        <Sidebar />
+
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col h-full overflow-hidden">
+          <HomeSection />
+        </div>
+      </div>
+    </>
+  )
 }
